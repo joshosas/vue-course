@@ -1,19 +1,13 @@
-<script>
-export default {
-  data() {
-    return {
-      name: 'Josh Osas',
-    }
-  },
-}
+<!-- App.vue -->
+
+<script setup>
+import Card from './components/HomeCards.vue'
+import Hero from './components/Hero.vue'
+import Navbar from './components/Navbar.vue'
 </script>
 
 <template>
-  <h1>Afar {{ name }} my Gee. I da here Brahh</h1>
+  <Navbar />
+  <Hero title="E concern U" />
+  <Card />
 </template>
-
-<style>
-h1 {
-  color: aqua;
-}
-</style>
