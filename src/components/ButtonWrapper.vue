@@ -2,11 +2,12 @@
 
 <script setup>
 import { defineProps } from 'vue'
+import { RouterLink } from 'vue-router'
 
 defineProps({
   href: {
     type: String,
-    default: 'jobs.html',
+    default: '/jobs',
   },
   bg: {
     type: String,
@@ -16,10 +17,10 @@ defineProps({
 </script>
 
 <template>
-  <a
+  <RouterLink
     :href="`${href}`"
     :class="`inline-block ${bg} text-white rounded-lg px-4 py-2 hover:bg-gray-700`"
   >
     <slot />
-  </a>
+  </RouterLink>
 </template>

@@ -11,12 +11,12 @@ import Card from './Card.vue'
         <Card bg="bg-gray-100">
           <h2 class="text-2xl font-bold">For Developers</h2>
           <p class="mt-2 mb-4">Browse our Vue jobs and start your career today</p>
-          <ButtonWrapper href="jobs.html" bg="bg-black"> Browse Jobs </ButtonWrapper>
+          <ButtonWrapper href="/jobs" bg="bg-black"> Browse Jobs </ButtonWrapper>
         </Card>
         <Card>
           <h2 class="text-2xl font-bold">For Employers</h2>
           <p class="mt-2 mb-4">List your job to find the perfect developer for the role</p>
-          <ButtonWrapper href="add-job.html" bg="bg-green-500"> Add Job </ButtonWrapper>
+          <ButtonWrapper href="/jobs/add" bg="bg-green-500"> Add Job </ButtonWrapper>
         </Card>
       </div>
     </div>
