@@ -1,4 +1,4 @@
-<!--  -->
+<!-- components/NavBar.vue -->
 
 <script setup>
 import logo from '@/assets/images/logo.png'
