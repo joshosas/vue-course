@@ -2,10 +2,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
 
 const job = ref({})
 const isLoading = ref(true)
@@ -22,6 +23,20 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+// Add Delete functio
+const deleteJob = async () => {
+  const confirmDelete = window.confirm('Are you sure you want to delete this job listing')
+
+  if (confirmDelete) {
+    try {
+      await axios.delete(`http://localhost:5000/jobs/${jobId}`)
+      router.push('/jobs')
+    } catch (error) {
+      console.error('Error deleting job', error)
+    }
+  }
+}
 </script>
 
 <template>
@@ -95,6 +110,7 @@ onMounted(async () => {
               >Edit Job</RouterLink
             >
             <button
+              @click="deleteJob"
               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
             >
               Delete Job

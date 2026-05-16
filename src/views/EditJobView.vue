@@ -1,16 +1,20 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
+const route = useRoute()
 const router = useRouter()
+const jobId = route.params.id
+
+const isLoading = ref(true)
 
 const form = ref({
   title: '',
-  type: 'Full-Time',
+  type: '',
   description: '',
   location: '',
-  salary: '$70K - $80K',
+  salary: '',
   company: {
     name: '',
     description: '',
@@ -19,42 +23,41 @@ const form = ref({
   },
 })
 
-// Error state tracking
 const errors = ref({
   title: '',
   location: '',
   contactEmail: '',
-  contactPhone: '',
   description: '',
 })
 
-// Validation Logic
-const validationForm = () => {
-  let isValid = true
+// Fetch current values to populate form
+onMounted(async () => {
+  try {
+    const response = await axios.get(`http://localhost:5000/jobs/${jobId}`)
+    form.value = response.data
+  } catch (error) {
+    console.error('Error fetching job details for edit:', error)
+  } finally {
+    isLoading.value = false
+  }
+})
 
-  errors.value = { title: '', location: '', contactEmail: '', contactPhone: '', description: '' }
+const validateForm = () => {
+  let isValid = true
+  errors.value = { title: '', location: '', contactEmail: '', description: '' }
 
   if (!form.value.title.trim()) {
     errors.value.title = 'Job listing name is required.'
     isValid = false
   }
-
   if (!form.value.description.trim()) {
     errors.value.description = 'Please provide a job description.'
     isValid = false
   }
-
   if (!form.value.location.trim()) {
     errors.value.location = 'Job location is required.'
     isValid = false
   }
-
-  if (!form.value.company.contactPhone.trim()) {
-    errors.value.company.contactPhone = 'Phone Number is required.'
-    isValid = false
-  }
-
-  // Basic email regex pattern check
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!form.value.company.contactEmail.trim()) {
     errors.value.contactEmail = 'Contact email is required.'
@@ -68,35 +71,32 @@ const validationForm = () => {
 }
 
 const handleSubmit = async () => {
-  // Stop if validation fails
-  if (!validationForm()) return
+  if (!validateForm()) return
 
-  // Continue if all form fields are valid
   try {
-    const response = await axios.post('http://localhost:5000/jobs', form.value)
-    router.push(`/jobs/${response.data.id}`)
+    // Send updated object back using a PUT request
+    await axios.put(`http://localhost:5000/jobs/${jobId}`, form.value)
+    router.push(`/jobs/${jobId}`) // Send back to details view
   } catch (error) {
-    console.error('Error adding job', error)
+    console.error('Error updating job:', error)
   }
 }
 </script>
 
 <template>
-  <section class="bg-green-50">
+  <div v-if="isLoading" class="text-center py-24 text-gray-500">
+    Loading job data for editing...
+  </div>
+
+  <section v-else class="bg-green-50">
     <div class="container m-auto max-w-2xl py-24">
       <div class="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-        <!-- novalidate prevents the browser from using native validation behaviors -->
         <form @submit.prevent="handleSubmit" novalidate>
-          <h2 class="text-3xl text-center font-semibold mb-6">Add Job</h2>
+          <h2 class="text-3xl text-center font-semibold mb-6">Update Job</h2>
 
           <div class="mb-4">
             <label class="block text-gray-700 font-bold mb-2">Job Type</label>
-            <select
-              v-model="form.type"
-              id="type"
-              name="type"
-              class="border rounded w-full py-2 px-3"
-            >
+            <select v-model="form.type" class="border rounded w-full py-2 px-3">
               <option value="Full-Time">Full-Time</option>
               <option value="Part-Time">Part-Time</option>
               <option value="Remote">Remote</option>
@@ -113,7 +113,6 @@ const handleSubmit = async () => {
                 'border rounded w-full py-2 px-3 mb-1',
                 errors.title ? 'border-red-500' : '',
               ]"
-              placeholder="eg. Senior Vue Developer"
             />
             <p v-if="errors.title" class="text-red-500 text-sm font-medium">{{ errors.title }}</p>
           </div>
@@ -127,7 +126,6 @@ const handleSubmit = async () => {
                 errors.description ? 'border-red-500' : '',
               ]"
               rows="4"
-              placeholder="Add any job duties, expectations, requirements, etc"
             ></textarea>
             <p v-if="errors.description" class="text-red-500 text-sm font-medium">
               {{ errors.description }}
@@ -136,12 +134,7 @@ const handleSubmit = async () => {
 
           <div class="mb-4">
             <label class="block text-gray-700 font-bold mb-2">Salary</label>
-            <select
-              v-model="form.salary"
-              id="salary"
-              name="salary"
-              class="border rounded w-full py-2 px-3"
-            >
+            <select v-model="form.salary" class="border rounded w-full py-2 px-3">
               <option value="Under $50K">Under $50K</option>
               <option value="$50K - $60K">$50K - $60K</option>
               <option value="$60K - $70K">$60K - $70K</option>
@@ -161,7 +154,6 @@ const handleSubmit = async () => {
                 'border rounded w-full py-2 px-3 mb-1',
                 errors.location ? 'border-red-500' : '',
               ]"
-              placeholder="Company Location"
             />
             <p v-if="errors.location" class="text-red-500 text-sm font-medium">
               {{ errors.location }}
@@ -176,7 +168,6 @@ const handleSubmit = async () => {
               v-model="form.company.name"
               type="text"
               class="border rounded w-full py-2 px-3"
-              placeholder="Company Name"
             />
           </div>
 
@@ -186,7 +177,6 @@ const handleSubmit = async () => {
               v-model="form.company.description"
               class="border rounded w-full py-2 px-3"
               rows="4"
-              placeholder="What does your company do?"
             ></textarea>
           </div>
 
@@ -199,7 +189,6 @@ const handleSubmit = async () => {
                 'border rounded w-full py-2 px-3 mb-1',
                 errors.contactEmail ? 'border-red-500' : '',
               ]"
-              placeholder="Email address for applicants"
             />
             <p v-if="errors.contactEmail" class="text-red-500 text-sm font-medium">
               {{ errors.contactEmail }}
@@ -211,23 +200,16 @@ const handleSubmit = async () => {
             <input
               v-model="form.company.contactPhone"
               type="tel"
-              :class="[
-                'border rounded w-full py-2 px-3',
-                errors.contactPhone ? 'border-red-500' : '',
-              ]"
-              placeholder="Add phone number"
+              class="border rounded w-full py-2 px-3"
             />
-            <p v-if="errors.contactPhone" class="text-red-500 text-sm font-medium">
-              {{ errors.contactPhone }}
-            </p>
           </div>
 
           <div>
             <button
-              class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-20 rounded-full mx-auto block focus:outline-none focus:shadow-outline"
+              class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Add Job
+              Update Job
             </button>
           </div>
         </form>

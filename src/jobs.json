@@ -11,7 +11,7 @@
         "name": "NewTek Solutions",
         "description": "NewTek Solutions is a leading technology company specializing in web development and digital solutions. We pride ourselves on delivering high-quality products and services to our clients while fostering a collaborative and innovative work environment.",
         "contactEmail": "contact@teksolutions.com",
-        "contactPhone": "555-555-5555"
+        "contactPhone": "666-444-333"
       }
     },
     {
@@ -83,20 +83,6 @@
         "contactEmail": "contact@ipsumlorem.com",
         "contactPhone": "555-555-5555"
       }
-    },
-    {
-      "title": "Laravel Dev",
-      "type": "Full-Time",
-      "description": "Build Apps",
-      "location": "Abuja",
-      "salary": "$70K - $80K",
-      "company": {
-        "name": "Impact L",
-        "description": "We freelance Gigs",
-        "contactEmail": "impactl@gmail.com",
-        "contactPhone": "333-444-5555"
-      },
-      "id": "XCQljhHvnWY"
     },
     {
       "title": "Laravel Dev",
